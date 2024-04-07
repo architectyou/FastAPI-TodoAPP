@@ -2,8 +2,8 @@
 .venv/
 api/__pycache__/
 *.yaml
-Dockefile
-Dockefile.cloud
+Dockerfile
+Dockerfile.cloud
 *.lock
 *.toml
 *.DS_Store
