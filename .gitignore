@@ -1,0 +1,10 @@
+.dockervenv/
+.venv/
+api/__pycache__/
+*.yaml
+Dockefile
+Dockefile.cloud
+*.lock
+*.toml
+*.DS_Store
+*.pyc
