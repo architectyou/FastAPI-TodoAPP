@@ -10,35 +10,38 @@ import api.cruds.task as task_crud
 from api.db import get_db
 router = APIRouter()
 
+# 비동기
+from sqlalchemy.ext.asyncio import AsyncSession
+
 # @router.get("/tasks")
 # async def list_tasks() :
 #     #pass : 아무것도 하지 않는 문장
 #     pass
 
 @router.get("/tasks", response_model=list[task_schema.Task])
-async def list_tasks(db : Session = Depends(get_db)) :
-    return task_crud.get_tasks_with_done(db)
+async def list_tasks(db : AsyncSession = Depends(get_db)) :
+    return await task_crud.get_tasks_with_done(db)
 
 @router.post("/tasks", response_model=task_schema.TaskCreateResponse)
-async def create_tasks(task_body : task_schema.TaskCreate, db : Session = Depends(get_db)):
-    return task_crud.create_task(db, task_body)
+async def create_tasks(task_body : task_schema.TaskCreate, db : AsyncSession = Depends(get_db)):
+    return await task_crud.create_task(db, task_body)
 
 @router.put("/tasks/{task_id}", response_model=task_schema.TaskCreateResponse)
 async def update_task(
     # db를 받아오도록 수정
-    task_id : int, task_body : task_schema.TaskCreate, db : Session = Depends(get_db)
+    task_id : int, task_body : task_schema.TaskCreate, db : AsyncSession = Depends(get_db)
 ) :
-    task = task_crud.get_task(db, task_id = task_id)
+    task = await task_crud.get_task(db, task_id = task_id)
     if task is None : 
         # task 가 없는 경우 HTTP exception을 출력하도록 설정
         # raise 문은 파이썬에서 예외를 명시적으로 발생시키는 데 이용됨
         raise HTTPException(status_code=404, detail = "Task not found")
-    return task_crud.update_task(db, task_body, original=task)
+    return await task_crud.update_task(db, task_body, original=task)
 
 @router.delete("/tasks/{task_id}", response_model = None)
-async def delete_tasks(task_id : int, db : Session = Depends(get_db)) :
-    task = task_crud.get_task(db, task_id = task_id)
+async def delete_tasks(task_id : int, db : AsyncSession = Depends(get_db)) :
+    task = await task_crud.get_task(db, task_id = task_id)
     if task is None : 
         raise HTTPException(status_code=404, detail = "Task not found")
     
-    return task_crud.delete_task(db, original = task)
+    return await task_crud.delete_task(db, original = task)
