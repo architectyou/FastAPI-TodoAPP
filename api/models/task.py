@@ -9,6 +9,8 @@ class Task(Base) :
     id = Column(Integer, primary_key=True)
     title = Column(String(1024))
 
+    # cascade에서 delete를 지정하면 DELETE / tasks/{task_id} 인터페이스에서 Task를 삭제할 때
+    # 외부 키에 지정된 동일한 id의 done 이 있으면 자동으로 삭제됨.
     done = relationship("Done", back_populates="task", cascade="delete")
 
 class Done(Base) :
